@@ -297,3 +297,91 @@ final class Text implements Literal {
 
   const Text({this.position, required this.value});
 }
+
+final class Spoiler implements Parent {
+  @override
+  final type = "spoiler";
+
+  @override
+  final data = null;
+
+  @override
+  final Position? position;
+
+  @override
+  final List<PhrasingContent> children;
+
+  const Spoiler({required this.children, this.position});
+}
+
+final class Video implements Node, Resource {
+  @override
+  final type = "video";
+
+  @override
+  final data = null;
+
+  @override
+  final Position? position;
+
+  @override
+  final String url;
+
+  @override
+  final String? title;
+
+  final String videoType;
+
+  const Video({
+    this.position,
+    required this.url,
+    this.title,
+    required this.videoType,
+  });
+}
+
+final class CenterAlign implements Parent {
+  @override
+  final type = "centerAlign";
+
+  @override
+  final data = null;
+
+  @override
+  final Position? position;
+
+  @override
+  final List<FlowContent> children;
+
+  const CenterAlign({required this.children, this.position});
+}
+
+final class SizedImage implements Node, Resource, Alternative {
+  @override
+  final type = "sizedImage";
+
+  @override
+  final data = null;
+
+  @override
+  final Position? position;
+
+  @override
+  final String url;
+
+  @override
+  final String? title;
+
+  @override
+  final String? alt;
+
+  final int size;
+
+  const SizedImage({
+    this.position,
+    required this.url,
+    this.title,
+    this.alt,
+    required this.size,
+  });
+}
