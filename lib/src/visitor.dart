@@ -53,18 +53,18 @@ class MdastWidgetVisitor {
         padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
         child: RichText(
           text: TextSpan(
-            style: headingStyle?.copyWith(color: Colors.black),
+            style: headingStyle ?? const TextStyle(color: Colors.black),
             children: _visitPhrasing(node.children),
           ),
         ),
       );
     } else if (node is mdast_nodes.Blockquote) {
       return Container(
-        decoration: const BoxDecoration(
+        decoration: style.blockquoteDecoration ?? const BoxDecoration(
           border: Border(left: BorderSide(color: Colors.grey, width: 4.0)),
         ),
-        padding: const EdgeInsets.only(left: 8.0),
-        margin: const EdgeInsets.symmetric(vertical: 8.0),
+        padding: style.blockquotePadding ?? const EdgeInsets.only(left: 8.0),
+        margin: style.blockquoteMargin ?? const EdgeInsets.symmetric(vertical: 8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: visitNodes(node.children),
@@ -101,9 +101,9 @@ class MdastWidgetVisitor {
       );
     } else if (node is mdast_nodes.Code) {
       return Container(
-        color: Colors.grey[200],
-        padding: const EdgeInsets.all(8.0),
-        margin: const EdgeInsets.only(bottom: 8.0),
+        decoration: style.codeBlockDecoration ?? BoxDecoration(color: Colors.grey[200]),
+        padding: style.codeBlockPadding ?? const EdgeInsets.all(8.0),
+        margin: style.codeBlockMargin ?? const EdgeInsets.only(bottom: 8.0),
         width: double.infinity,
         child: Text(
           node.value,
@@ -120,8 +120,8 @@ class MdastWidgetVisitor {
       );
     } else if (node is mdast_nodes.Spoiler) {
         return Container(
-          color: Colors.black,
-          padding: const EdgeInsets.all(4.0),
+          decoration: style.spoilerDecoration ?? const BoxDecoration(color: Colors.black),
+          padding: style.spoilerPadding ?? const EdgeInsets.all(4.0),
           child: RichText(
             text: TextSpan(
               style: style.spoiler ?? const TextStyle(color: Colors.black),
@@ -134,10 +134,13 @@ class MdastWidgetVisitor {
         return videoBuilder!(node.url, node.videoType);
       }
       return Container(
-        color: Colors.grey[300],
-        padding: const EdgeInsets.all(8.0),
-        margin: const EdgeInsets.only(bottom: 8.0),
-        child: Text('Video (${node.videoType}): ${node.url}'),
+        decoration: style.videoFallbackDecoration ?? BoxDecoration(color: Colors.grey[300]),
+        padding: style.videoFallbackPadding ?? const EdgeInsets.all(8.0),
+        margin: style.videoFallbackMargin ?? const EdgeInsets.only(bottom: 8.0),
+        child: Text(
+          'Video (${node.videoType}): ${node.url}',
+          style: style.videoFallbackTextStyle ?? const TextStyle(color: Colors.black),
+        ),
       );
     } else if (node is mdast_nodes.SizedImage) {
       if (imageBuilder != null) {
@@ -197,7 +200,8 @@ class MdastWidgetVisitor {
       } else if (node is mdast_nodes.Spoiler) {
         spans.add(WidgetSpan(
           child: Container(
-            color: Colors.black,
+            decoration: style.spoilerDecoration ?? const BoxDecoration(color: Colors.black),
+            padding: style.spoilerPadding,
             child: RichText(
               text: TextSpan(
                 style: style.spoiler ?? const TextStyle(color: Colors.black, backgroundColor: Colors.black),
@@ -226,9 +230,13 @@ class MdastWidgetVisitor {
           child: videoBuilder != null
               ? videoBuilder!(node.url, node.videoType)
               : Container(
-                  color: Colors.grey[300],
-                  padding: const EdgeInsets.all(4.0),
-                  child: Text('Video (${node.videoType}): ${node.url}'),
+                  decoration: style.videoFallbackDecoration ?? BoxDecoration(color: Colors.grey[300]),
+                  padding: style.videoFallbackPadding ?? const EdgeInsets.all(4.0),
+                  margin: style.videoFallbackMargin,
+                  child: Text(
+                    'Video (${node.videoType}): ${node.url}',
+                    style: style.videoFallbackTextStyle ?? const TextStyle(color: Colors.black),
+                  ),
                 ),
         ));
       } else if (node is mdast_nodes.Break) {

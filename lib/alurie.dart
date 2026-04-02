@@ -72,6 +72,22 @@ class AlurieStyle {
   final TextStyle? link;
   final TextStyle? spoiler;
 
+  final BoxDecoration? blockquoteDecoration;
+  final EdgeInsetsGeometry? blockquotePadding;
+  final EdgeInsetsGeometry? blockquoteMargin;
+
+  final BoxDecoration? codeBlockDecoration;
+  final EdgeInsetsGeometry? codeBlockPadding;
+  final EdgeInsetsGeometry? codeBlockMargin;
+
+  final BoxDecoration? spoilerDecoration;
+  final EdgeInsetsGeometry? spoilerPadding;
+
+  final BoxDecoration? videoFallbackDecoration;
+  final EdgeInsetsGeometry? videoFallbackPadding;
+  final EdgeInsetsGeometry? videoFallbackMargin;
+  final TextStyle? videoFallbackTextStyle;
+
   const AlurieStyle({
     this.paragraph,
     this.h1,
@@ -85,5 +101,17 @@ class AlurieStyle {
     this.code,
     this.link,
     this.spoiler,
+    this.blockquoteDecoration,
+    this.blockquotePadding,
+    this.blockquoteMargin,
+    this.codeBlockDecoration,
+    this.codeBlockPadding,
+    this.codeBlockMargin,
+    this.spoilerDecoration,
+    this.spoilerPadding,
+    this.videoFallbackDecoration,
+    this.videoFallbackPadding,
+    this.videoFallbackMargin,
+    this.videoFallbackTextStyle,
   });
 }
