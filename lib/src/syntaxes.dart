@@ -46,12 +46,10 @@ class CenterBlockSyntax extends BlockSyntax {
       parser.advance();
     }
 
-    final document = Document(
-      extensionSet: ExtensionSet.gitHubFlavored,
-      inlineSyntaxes: parser.document.inlineSyntaxes,
-      blockSyntaxes: parser.document.blockSyntaxes,
-    );
-    final children = document.parseLines(childLines);
+    final children = BlockParser(
+      childLines.map((line) => Line(line)).toList(),
+      parser.document,
+    ).parseLines();
 
     return Element('centerAlign', children);
   }

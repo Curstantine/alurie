@@ -5,8 +5,9 @@ import 'package:markdown/markdown.dart' as md;
 import 'src/syntaxes.dart';
 import 'src/converter.dart';
 import 'src/visitor.dart';
+import 'mdast/abstract.dart' as mdast;
 
-class Alurie extends StatelessWidget {
+class Alurie extends StatefulWidget {
   final String data;
   final AlurieStyle? style;
   final void Function(String)? onTapLink;
@@ -23,7 +24,27 @@ class Alurie extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  State<Alurie> createState() => _AlurieState();
+}
+
+class _AlurieState extends State<Alurie> {
+  late List<mdast.Node> _mdastNodes;
+
+  @override
+  void initState() {
+    super.initState();
+    _parseData();
+  }
+
+  @override
+  void didUpdateWidget(covariant Alurie oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.data != oldWidget.data) {
+      _parseData();
+    }
+  }
+
+  void _parseData() {
     // 1. Parse markdown string to md.Node
     final document = md.Document(
       extensionSet: md.ExtensionSet.gitHubFlavored,
@@ -36,20 +57,23 @@ class Alurie extends StatelessWidget {
         CenterBlockSyntax(),
       ],
     );
-    final mdNodes = document.parseLines(data.split('\n'));
+    final mdNodes = document.parseLines(widget.data.split('\n'));
 
     // 2. Convert md.Node to mdast.Node
     final converter = Converter();
-    final mdastNodes = converter.convert(mdNodes);
+    _mdastNodes = converter.convert(mdNodes);
+  }
 
+  @override
+  Widget build(BuildContext context) {
     // 3. Render mdast.Node to Flutter Widgets
     final visitor = MdastWidgetVisitor(
-      style: style ?? const AlurieStyle(),
-      onTapLink: onTapLink,
-      videoBuilder: videoBuilder,
-      imageBuilder: imageBuilder,
+      style: widget.style ?? const AlurieStyle(),
+      onTapLink: widget.onTapLink,
+      videoBuilder: widget.videoBuilder,
+      imageBuilder: widget.imageBuilder,
     );
-    final widgets = visitor.visitNodes(mdastNodes);
+    final widgets = visitor.visitNodes(_mdastNodes);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
