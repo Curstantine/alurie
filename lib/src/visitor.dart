@@ -146,6 +146,9 @@ class MdastWidgetVisitor {
       if (imageBuilder != null) {
         return imageBuilder!(node.url, node.size);
       }
+      if (!_isSafeUrl(node.url)) {
+        return const Text('Invalid image URL');
+      }
       return Container(
         width: node.size > 0 ? node.size.toDouble() : null,
         margin: const EdgeInsets.only(bottom: 8.0),
@@ -153,6 +156,9 @@ class MdastWidgetVisitor {
             errorBuilder: (context, error, stackTrace) => Text('Failed to load image: ${node.url}')),
       );
     } else if (node is mdast_nodes.Image) {
+      if (!_isSafeUrl(node.url)) {
+        return const Text('Invalid image URL');
+      }
       return Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
         child: Image.network(node.url,
@@ -165,6 +171,12 @@ class MdastWidgetVisitor {
     }
 
     return null;
+  }
+
+  bool _isSafeUrl(String url) {
+    final uri = Uri.tryParse(url);
+    if (uri == null) return false;
+    return uri.scheme == 'http' || uri.scheme == 'https';
   }
 
   List<InlineSpan> _visitPhrasing(List<mdast_nodes.PhrasingContent> nodes) {
@@ -211,20 +223,28 @@ class MdastWidgetVisitor {
           ),
         ));
       } else if (node is mdast_nodes.Image) {
-        spans.add(WidgetSpan(
-          child: Image.network(node.url,
-              errorBuilder: (context, error, stackTrace) => Text('Failed to load image: ${node.url}')),
-        ));
+        if (_isSafeUrl(node.url)) {
+          spans.add(WidgetSpan(
+            child: Image.network(node.url,
+                errorBuilder: (context, error, stackTrace) => Text('Failed to load image: ${node.url}')),
+          ));
+        } else {
+          spans.add(const TextSpan(text: '[Invalid image URL]'));
+        }
       } else if (node is mdast_nodes.SizedImage) {
-        spans.add(WidgetSpan(
-          child: imageBuilder != null
-              ? imageBuilder!(node.url, node.size)
-              : Container(
-                  width: node.size > 0 ? node.size.toDouble() : null,
-                  child: Image.network(node.url,
-                      errorBuilder: (context, error, stackTrace) => Text('Failed to load image: ${node.url}')),
-                ),
-        ));
+        if (imageBuilder != null) {
+          spans.add(WidgetSpan(child: imageBuilder!(node.url, node.size)));
+        } else if (_isSafeUrl(node.url)) {
+          spans.add(WidgetSpan(
+            child: Container(
+              width: node.size > 0 ? node.size.toDouble() : null,
+              child: Image.network(node.url,
+                  errorBuilder: (context, error, stackTrace) => Text('Failed to load image: ${node.url}')),
+            ),
+          ));
+        } else {
+          spans.add(const TextSpan(text: '[Invalid image URL]'));
+        }
       } else if (node is mdast_nodes.Video) {
         spans.add(WidgetSpan(
           child: videoBuilder != null
