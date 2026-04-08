@@ -3,7 +3,6 @@ import 'package:markdown/markdown.dart';
 class SpoilerSyntax extends InlineSyntax {
   SpoilerSyntax() : super(r'~!(.*?)!~');
 
-  @override
   bool onMatch(InlineParser parser, Match match) {
     final content = match[1]!;
     final inlineParser = InlineParser(content, parser.document);
@@ -16,7 +15,6 @@ class SpoilerSyntax extends InlineSyntax {
 class VideoSyntax extends InlineSyntax {
   VideoSyntax() : super(r'(youtube|webm)\((.*?)\)');
 
-  @override
   bool onMatch(InlineParser parser, Match match) {
     parser.addNode(Element('video', [Text(match[2]!)])..attributes['type'] = match[1]!);
     return true;
@@ -58,7 +56,6 @@ class CenterBlockSyntax extends BlockSyntax {
 class SizedImageSyntax extends InlineSyntax {
   SizedImageSyntax() : super(r'img(\d+)\((.*?)\)');
 
-  @override
   bool onMatch(InlineParser parser, Match match) {
     parser.addNode(Element.empty('sizedImage')
       ..attributes['size'] = match[1]!
