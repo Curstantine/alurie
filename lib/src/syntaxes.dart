@@ -25,7 +25,7 @@ class VideoSyntax extends InlineSyntax {
 
 class CenterBlockSyntax extends BlockSyntax {
   @override
-  RegExp get pattern => RegExp(r'^~~~$');
+  final RegExp pattern = RegExp(r'^~~~$');
 
   @override
   bool canParse(BlockParser parser) {
